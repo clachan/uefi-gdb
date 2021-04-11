@@ -62,7 +62,7 @@ class Command_efi(gdb.Command):
     -64 - use X64 architecture (default is IA32)
     """
 
-    LOG_FILE = 'debug.log'
+    LOG_FILE = 'ovmf-debug.log'
     A_PATTERN = r'Loading [^ ]+ at (0x[0-9A-F]{8,}) [^ ]+ ([^ ]+)\.efi'
 
     def __init__(self):
@@ -70,14 +70,15 @@ class Command_efi(gdb.Command):
         self.arch = 'IA32'
 
     def find_file(self, name):
+        print(" -- want to find: %s" % name)
         # look in working directory first (without subdirectories)
-        for f in os.listdir('.'):
+        for f in os.listdir('edk2'):
             if f == name and os.path.isfile(f):
                 return f
         # if nothing is found, look in "Build" directory and subdirectories
-        if not os.path.isdir('Build'):
+        if not os.path.isdir('edk2/Build'):
             return None
-        for root, dirs, files in os.walk('Build'):
+        for root, dirs, files in os.walk('edk2/Build'):
             if name in files and self.arch in root.split(os.sep):
                 return os.path.join(root, name)
 
